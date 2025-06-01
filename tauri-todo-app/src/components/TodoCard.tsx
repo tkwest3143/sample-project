@@ -1,15 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { TodoCommand } from "@/commands/todo";
+import { useEffect, useState } from "react";
 
 export default function TodoCard() {
   const [task, setTask] = useState("");
-  const [todos, setTodos] = useState<string[]>([]);
+  const [dueDate, setDueDate] = useState("");
 
+  // タスク一覧はオブジェクトで管理
+  const [todos, setTodos] = useState<{ text: string; due: string }[]>([]);
+
+  useEffect(() => {
+    TodoCommand.loadTodos().then((data) => setTodos(data));
+  }, []);
+  useEffect(() => {
+    
+      TodoCommand.saveTodos(todos);
+  }, [todos]);
   const handleAdd = () => {
-    if (!task.trim()) return;
-    setTodos([...todos, task.trim()]);
+    if (!task.trim() || !dueDate) return;
+    setTodos([...todos, { text: task.trim(), due: dueDate }]);
     setTask("");
+    setDueDate("");
+  };
+  const handleDelete = (index: number) => {
+    setTodos(todos.filter((_, i) => i !== index));
   };
 
   return (
@@ -21,17 +36,25 @@ export default function TodoCard() {
         今日やることを整理しましょう
       </p>
 
-      <div className="flex items-center gap-2 mb-6">
+      <div className="flex flex-col gap-4 mb-6">
         <input
           type="text"
-          className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
-          placeholder="タスクを入力..."
           value={task}
           onChange={(e) => setTask(e.target.value)}
+          placeholder="タスクを入力..."
+          className="px-4 py-2 border rounded-lg text-black"
         />
+
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          className="px-4 py-2 border rounded-lg text-black"
+        />
+
         <button
           onClick={handleAdd}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg transition duration-150"
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
         >
           追加
         </button>
@@ -41,9 +64,19 @@ export default function TodoCard() {
         {todos.map((todo, index) => (
           <li
             key={index}
-            className="px-4 py-3 bg-blue-50 border border-blue-100 rounded-lg text-gray-800 shadow-sm"
+            className="p-4 bg-blue-50 border rounded-lg flex justify-between items-center"
           >
-            {todo}
+            <div>
+              <p className="font-medium text-gray-800">{todo.text}</p>
+              <p className="text-sm text-gray-500">期限: {todo.due}</p>
+            </div>
+            <button
+              onClick={() => handleDelete(index)}
+              className="text-red-500 hover:text-red-700"
+              aria-label="削除"
+            >
+              削除
+            </button>
           </li>
         ))}
       </ul>
