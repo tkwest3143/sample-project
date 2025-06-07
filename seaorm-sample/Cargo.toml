@@ -1,0 +1,8 @@
+[package]
+name = "seaorm-sample"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+sea-orm = { version = "1.1.0", features = [ "sqlx-sqlite", "runtime-async-std-native-tls", "macros" ] }
+async-std = { version = "1.12", features = ["attributes"] }
