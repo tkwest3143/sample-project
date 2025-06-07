@@ -1,11 +1,14 @@
 "use client";
 
 import { TodoCommand } from "@/commands/todo";
+import { sendNotification } from "@tauri-apps/plugin-notification";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
 export default function TodoCard() {
   const [task, setTask] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [nowTime, setNowTime] = useState(dayjs());
 
   // タスク一覧はオブジェクトで管理
   const [todos, setTodos] = useState<{ text: string; due: string }[]>([]);
@@ -14,9 +17,28 @@ export default function TodoCard() {
     TodoCommand.loadTodos().then((data) => setTodos(data));
   }, []);
   useEffect(() => {
-    
+    todos.forEach((todo) => {
+    const isToday = dayjs().isSame(dayjs(todo.due), "day");
+    if (isToday) {
+      sendNotification({
+        title: "今日のタスク",
+        body: `「${todo.text}」の期限は今日です。`,
+      });
+    }
+  });
       TodoCommand.saveTodos(todos);
   }, [todos]);
+  const checkDueTodos = (todos: { text: string; due: string }[]) => {
+  const today = dayjs().format("YYYY-MM-DD");
+  todos.forEach((todo) => {
+    if (todo.due === today) {
+      sendNotification({
+        title: "本日のタスク通知",
+        body: `タスク「${todo.text}」の期限は本日です。`,
+      });
+    }
+  });
+};
   const handleAdd = () => {
     if (!task.trim() || !dueDate) return;
     setTodos([...todos, { text: task.trim(), due: dueDate }]);

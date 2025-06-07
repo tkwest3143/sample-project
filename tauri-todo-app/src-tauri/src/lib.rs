@@ -1,6 +1,7 @@
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_notification::init())
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
@@ -20,7 +21,6 @@ use serde::{Deserialize, Serialize};
 use std::fs::{self, File};
 use std::io::{Read, Write};
 use std::path::PathBuf;
-
 
 #[derive(Serialize, Deserialize)]
 struct Todo {
@@ -51,7 +51,6 @@ fn load_todos() -> Result<Vec<Todo>, String> {
         .map_err(|e| e.to_string())?;
     serde_json::from_str(&contents).map_err(|e| e.to_string())
 }
-
 
 // データベースのパスを取得する関数
 fn get_data_directory() -> PathBuf {
