@@ -8,7 +8,7 @@
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env  # DJANGO_SECRET_KEY を設定
+cp .env.example .env
 python manage.py migrate
 ```
 
