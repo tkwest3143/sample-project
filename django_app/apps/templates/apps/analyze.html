@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>AI 画像解析</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 16px; }
+    h1 { font-size: 1.4rem; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 4px; font-weight: bold; }
+    input[type="text"] { display: block; width: 100%; padding: 6px; box-sizing: border-box; }
+    button { padding: 8px 20px; background: #0066cc; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #0052a3; }
+    .result { margin-top: 24px; padding: 16px; border-radius: 4px; }
+    .result.success { background: #e6f4ea; border: 1px solid #34a853; }
+    .result.error   { background: #fce8e6; border: 1px solid #ea4335; }
+    .result dt { font-weight: bold; margin-bottom: 4px; }
+    .errorlist { color: #ea4335; padding-left: 20px; }
+  </style>
+</head>
+<body>
+
+  <h1>AI 画像解析</h1>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      {{ form.image_path.label_tag }}
+      {{ form.image_path }}
+      {% if form.image_path.errors %}
+        <ul class="errorlist">
+          {% for error in form.image_path.errors %}<li>{{ error }}</li>{% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    <button type="submit">解析する</button>
+  </form>
+
+  {% if result %}
+  <div class="result success">
+    <dl>
+      <dt>解析 ID</dt>
+      <dd>{{ result.id }}</dd>
+    </dl>
+  </div>
+  {% endif %}
+
+  {% if error %}
+  <div class="result error">
+    <dl>
+      <dt>エラー</dt>
+      <dd>{{ error }}</dd>
+    </dl>
+  </div>
+  {% endif %}
+
+</body>
+</html>

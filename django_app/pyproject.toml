@@ -1,0 +1,13 @@
+[tool.ruff]
+line-length = 119
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle (PEP 8)
+    "F",  # pyflakes
+    "I",  # isort (import 順)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"*/migrations/*" = ["E501"]
+"config/settings/*.py" = ["F403", "F405"]  # Django settings で from base import * を使うため
