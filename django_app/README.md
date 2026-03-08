@@ -22,34 +22,38 @@ python manage.py runserver
 
 ### API
 
-| Method | URL | 説明 |
-|--------|-----|------|
-| POST | `/api/images/analyze/` | AI 分析を実行して結果を保存 |
+| Method | URL                    | 説明                        |
+| ------ | ---------------------- | --------------------------- |
+| POST   | `/api/images/analyze/` | AI 分析を実行して結果を保存 |
 
 **リクエスト**
+
 ```json
 { "image_path": "/image/xxx/test.jpg" }
 ```
 
 **レスポンス（成功）**
+
 ```json
 { "id": 42 }
 ```
 
 **レスポンス（失敗）**
+
 ```json
 { "error": "Error:E50012" }
 ```
 
 ### 画面
 
-| URL | 説明 |
-|-----|------|
+| URL | 説明                          |
+| --- | ----------------------------- |
 | `/` | 画像パス入力・AI 分析実行画面 |
 
 ## 設定
 
 `config/settings/local.py` の `USE_MOCK_AI_API` で実 API とモックを切り替えます。
+モックファイルは`apps/mocks/mock_response.json`に保存されており、実 API を呼び出す場合はこのファイルは使用されません。
 
 ```python
 USE_MOCK_AI_API = True   # モック（デフォルト）
